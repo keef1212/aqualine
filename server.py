@@ -36,8 +36,7 @@ class ChatServer:
                 message = self.receive_message(client_socket)
                 if not message:
                     break
-                formatted_message = f"{nickname}: {message}"
-                self.broadcast_message(formatted_message, sender_socket=client_socket)
+                self.broadcast_message(f"{nickname}: {message}", sender_socket=client_socket)
         except ConnectionResetError:
             pass
 
@@ -55,13 +54,9 @@ class ChatServer:
         except ConnectionResetError:
             pass
 
-    def broadcast_message(self, message, sender_socket=None, sender_nickname=None):
+    def broadcast_message(self, message, sender_socket=None):
         for client_socket in self.client_sockets:
-            if sender_nickname and client_socket == sender_socket:
-                client_socket.send(message.encode())
-            elif sender_nickname:
-                client_socket.send(f"{sender_nickname}: {message}".encode())
-            else:
+            if client_socket != sender_socket:
                 client_socket.send(message.encode())
 
 

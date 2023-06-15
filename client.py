@@ -3,7 +3,6 @@ import threading
 import os
 import sys
 
-
 class ChatClient:
     def __init__(self):
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -29,7 +28,10 @@ class ChatClient:
             if message == "/quit":
                 self.send_message(message)
                 break
-            self.send_message(f"{self.nickname}: {message}")
+            self.send_message(message)
+
+    def send_message(self, message):
+        self.client_socket.send(message.encode())
 
     def receive_messages(self):
         while True:
@@ -40,12 +42,6 @@ class ChatClient:
             except ConnectionResetError:
                 print("Disconnected from the server.")
                 sys.exit(1)
-
-    def send_message(self, message):
-        formatted_message = f"{self.nickname}: {message}"
-        self.client_socket.send(formatted_message.encode())
-
-
 
 
 client = ChatClient()

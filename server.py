@@ -29,6 +29,8 @@ class ChatServer:
         self.nicknames[client_socket] = nickname
 
         print(f"New connection from {client_address[0]}:{client_address[1]} (Username: {nickname})")
+        if nickname == "badactor":
+            print("WARNING: User above is listed as dangerous, be wary!")
         self.broadcast_message(f"{nickname} has joined the chat!", sender_socket=client_socket)
 
         try:

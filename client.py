@@ -38,10 +38,12 @@ class ChatClient:
         while True:
             try:
                 message = self.client_socket.recv(1024).decode()
-                print(message)
+                if message:
+                    print(message)
             except ConnectionResetError:
                 print("Disconnected from the server.")
                 sys.exit(1)
+
 
 
 client = ChatClient()

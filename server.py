@@ -36,24 +36,8 @@ class ChatServer:
                 message = self.receive_message(client_socket)
                 if not message:
                     break
-                self.broadcast_message(message, sender_socket=client_socket, sender_nickname=nickname)
-        except ConnectionResetError:
-            pass
-
-        self.client_sockets.remove(client_socket)
-        self.client_addresses.remove(client_address)
-        self.nicknames.pop(client_socket)
-        client_socket.close()
-        print(f"Connection closed: {client_address[0]}:{client_address[1]} (Username: {nickname})")
-        self.broadcast_message(f"{nickname} has left the chat.")
-
-
-        try:
-            while True:
-                message = self.receive_message(client_socket)
-                if not message:
-                    break
-                self.broadcast_message(message, sender_socket=client_socket, sender_nickname=nickname)
+                formatted_message = f"{nickname}: {message}"
+                self.broadcast_message(formatted_message, sender_socket=client_socket)
         except ConnectionResetError:
             pass
 

@@ -31,9 +31,6 @@ class ChatClient:
                 break
             self.send_message(f"{self.nickname}: {message}")
 
-    def send_message(self, message):
-        self.client_socket.send(message.encode())
-
     def receive_messages(self):
         while True:
             try:
@@ -43,6 +40,11 @@ class ChatClient:
             except ConnectionResetError:
                 print("Disconnected from the server.")
                 sys.exit(1)
+
+    def send_message(self, message):
+        formatted_message = f"{self.nickname}: {message}"
+        self.client_socket.send(formatted_message.encode())
+
 
 
 

@@ -29,7 +29,24 @@ class ChatServer:
         self.nicknames[client_socket] = nickname
 
         print(f"New connection from {client_address[0]}:{client_address[1]} (Username: {nickname})")
-        self.broadcast_message(f"{nickname} has joined the chat!")
+        self.broadcast_message(f"{nickname} has joined the chat!", sender_socket=client_socket)
+
+        try:
+            while True:
+                message = self.receive_message(client_socket)
+                if not message:
+                    break
+                self.broadcast_message(message, sender_socket=client_socket, sender_nickname=nickname)
+        except ConnectionResetError:
+            pass
+
+        self.client_sockets.remove(client_socket)
+        self.client_addresses.remove(client_address)
+        self.nicknames.pop(client_socket)
+        client_socket.close()
+        print(f"Connection closed: {client_address[0]}:{client_address[1]} (Username: {nickname})")
+        self.broadcast_message(f"{nickname} has left the chat.")
+
 
         try:
             while True:

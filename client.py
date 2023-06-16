@@ -3,7 +3,7 @@ import threading
 import os
 import sys
 
-class ChatClient:
+class AquaClient:
     def __init__(self):
         os.system('cls' if os.name == 'nt' else 'clear')
         self.client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -44,5 +44,5 @@ class ChatClient:
                 sys.exit(1)
 
 
-client = ChatClient()
+client = AquaClient()
 client.connect()

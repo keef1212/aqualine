@@ -4,10 +4,10 @@ import os
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
-class ChatServer:
+class AquaServer:
     def __init__(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.server_host = '127.0.0.1'
+        self.server_host = '127.0.0.1' #If you want this to work across networks, make sure you replace "127.0.0.1" with the local IP of your machine (eg: 192.168.0.40)
         self.server_port = 8000
         self.client_sockets = []
         self.client_addresses = []
@@ -64,5 +64,5 @@ class ChatServer:
                 client_socket.send(message.encode())
 
 
-server = ChatServer()
+server = AquaServer()
 server.start()

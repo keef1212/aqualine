@@ -84,7 +84,7 @@ class AquaServer:
             else:
                 try:
                     self.send_message(message, client_socket)
-                except OSError:
+                except AttributeError:
                     print("Error sending message to a client.")
 
 

@@ -18,10 +18,12 @@ class AquaClient:
             print("Connection refused. The server is not available.")
             sys.exit(1)
 
-        self.send_message(f"{self.nickname}")
+        self.send_message(self.nickname)
 
         receive_thread = threading.Thread(target=self.receive_messages)
         receive_thread.start()
+
+        self.send_user_messages()
 
     def send_message(self, message):
         self.client_socket.send(message.encode())
@@ -34,8 +36,23 @@ class AquaClient:
                     print(message)
             except ConnectionResetError:
                 print("Disconnected from the server.")
-                sys.exit(1)
+                break
 
+        self.client_socket.close()
+        sys.exit(0)
+
+    def send_user_messages(self):
+        try:
+            while True:
+                message = input()
+                if message == "/quit":
+                    self.send_message(message)
+                    break
+                self.send_message(message)
+        except (KeyboardInterrupt, EOFError):
+            self.send_message("/quit")
+
+        self.client_socket.close()
 
 client = AquaClient()
 client.connect()

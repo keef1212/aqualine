@@ -18,7 +18,7 @@ class AquaServer:
         self.server_socket.listen(5)
         print("Server started. Listening for connections...")
 
-        threading.Thread(target=self.handle_server_input).start()  # Start a separate thread to handle server input
+        threading.Thread(target=self.handle_server_input).start()
 
         while True:
             client_socket, client_address = self.server_socket.accept()
@@ -38,8 +38,12 @@ class AquaServer:
                 message = self.receive_message(client_socket)
                 if not message:
                     break
-                if message.startswith("/private"):
+                elif message.startswith("/private"):
                     self.send_private_message(message, sender_socket=client_socket)
+                elif message == "/users":
+                    self.send_message(f"Connected Users: {', '.join(self.nicknames.values())}", client_socket.send)
+                elif message == "/help":
+                    self.send_message("Available commands: /users, /private", client_socket.send)
                 else:
                     self.broadcast_message(message, sender_socket=client_socket, sender_nickname=nickname)
         except ConnectionResetError:
@@ -59,7 +63,7 @@ class AquaServer:
         except ConnectionResetError:
             pass
 
-    def send_message(self, client_socket, message):
+    def send_message(self, message, client_socket):
         client_socket.send(message.encode())
 
     def broadcast_message(self, message, sender_socket=None, sender_nickname=None):

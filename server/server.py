@@ -121,7 +121,7 @@ class AquaServer:
                 print("Note: the server wont restart on its own, you have to reopen the server file.")
                 print("This should only be used if you want to alert people that your restarting and not closing.")
                 os._exit(0)
-            elif command.startswith("/servermsg"):
+            elif command.startswith("/msg"):
                 server_message = command.split(" ", 1)[1]
                 print(f"Server: {server_message}")
                 self.broadcast_message(f"Server: {server_message}")

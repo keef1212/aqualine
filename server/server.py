@@ -1,11 +1,10 @@
 import socket
 import threading
 import os
-import sys
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
-class ChatServer:
+class AquaServer:
     def __init__(self):
         self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.server_host = '127.0.0.1'
@@ -13,14 +12,6 @@ class ChatServer:
         self.client_sockets = []
         self.client_addresses = []
         self.nicknames = {}
-        self.motd = self.load_motd()  # Load the MOTD from file
-
-    def load_motd(self):
-        try:
-            with open("motd.txt", "r") as file:
-                return file.read()
-        except FileNotFoundError:
-            return "If you see this, your motd file is missing."
 
     def start(self):
         self.server_socket.bind((self.server_host, self.server_port))
@@ -47,7 +38,10 @@ class ChatServer:
                 message = self.receive_message(client_socket)
                 if not message:
                     break
-                self.broadcast_message(message, sender_socket=client_socket, sender_nickname=nickname)
+                if message.startswith("/private"):
+                    self.send_private_message(message, sender_socket=client_socket)
+                else:
+                    self.broadcast_message(message, sender_socket=client_socket, sender_nickname=nickname)
         except ConnectionResetError:
             pass
 
@@ -77,18 +71,34 @@ class ChatServer:
             else:
                 self.send_message(client_socket, message)
 
+    def send_private_message(self, message, sender_socket):
+        try:
+            _, recipient, content = message.split(" ", 2)
+            recipient_socket = None
+            for client_socket, nickname in self.nicknames.items():
+                if nickname == recipient:
+                    recipient_socket = client_socket
+                    break
+            if recipient_socket:
+                self.send_message(recipient_socket, f"[Private] {self.nicknames[sender_socket]}: {content}")
+                self.send_message(sender_socket, f"[Private] To {self.nicknames[recipient_socket]}: {content}")
+            else:
+                self.send_message(sender_socket, f"User '{recipient}' not found.")
+        except ValueError:
+            self.send_message(sender_socket, "Invalid private message format.")
+
     def handle_server_input(self):
         while True:
             command = input("Server Command: ")
             if command == "/quit":
-                self.broadcast_message("Server closed.")
+                self.broadcast_message("Server is shutting down...")
                 os._exit(0)
             elif command.startswith("/servermsg"):
-                server_message = command.split(" ", 1)[1]  # Extract the server message
+                server_message = command.split(" ", 1)[1]
                 print(f"Server: {server_message}")
                 self.broadcast_message(f"Server: {server_message}")
             else:
                 print("Unknown command!")
 
-server = ChatServer()
+server = AquaServer()
 server.start()

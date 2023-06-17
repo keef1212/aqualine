@@ -17,6 +17,7 @@ class AquaServer:
         self.server_socket.bind((self.server_host, self.server_port))
         self.server_socket.listen(5)
         print("Server started. Listening for connections...")
+        print("Commands: /quit, /restart, /msg")
 
         threading.Thread(target=self.handle_server_input).start()
 
@@ -51,7 +52,7 @@ class AquaServer:
                 elif message == "/quit":
                     os._exit()
                 elif message == "/help":
-                    self.send_message("Available commands: /users, /private", client_socket)
+                    self.send_message("Available commands: /users, /private, /quit", client_socket)
                 else:
                     self.broadcast_message(message, sender_socket=client_socket, sender_nickname=nickname)
         except ConnectionResetError:

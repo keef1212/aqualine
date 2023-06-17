@@ -48,6 +48,8 @@ class AquaServer:
                     self.send_private_message(message, sender_socket=client_socket)
                 elif message == "/users":
                     self.send_connected_users(client_socket)
+                elif message == "/quit":
+                    os._exit()
                 elif message == "/help":
                     self.send_message("Available commands: /users, /private", client_socket)
                 else:

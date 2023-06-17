@@ -23,13 +23,6 @@ class AquaClient:
         receive_thread = threading.Thread(target=self.receive_messages)
         receive_thread.start()
 
-        while True:
-            message = input()
-            if message == "/quit":
-                self.send_message(message)
-                break
-            self.send_message(message)
-
     def send_message(self, message):
         self.client_socket.send(message.encode())
 
